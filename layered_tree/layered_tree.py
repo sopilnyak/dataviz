@@ -1,5 +1,6 @@
 import networkx as nx
 import matplotlib.pyplot as plt
+import math
 
 
 class Node:
@@ -22,6 +23,7 @@ def draw_graph():
             graph.add_edge(tree[i].data, tree[2 * i + 2].data)
 
     pos = nx.get_node_attributes(graph, 'pos')
+    plt.figure(figsize=(12, 8))
     nx.draw_networkx(graph, pos=pos)
     plt.savefig("output.png")
 
@@ -85,11 +87,18 @@ def draw_subtree(tree, root):
     draw_subtree(tree, 2 * root + 2)
 
 
-def generate_tree():
+def generate_tree(filename):
+    with open(filename, 'r') as file:
+        lines = file.readlines()
+    data = {}
+    n = 0
+    for line in lines:
+        ind, value = line.strip().split(',')
+        ind = int(ind)
+        data[ind] = value
+        n = max(ind, n)
     tree = []
-    n = 31
-    data = {0: '0', 1: '1', 2: '2', 3: '3', 5: '5', 6: '6', 8: '8', 11: '11', 12: '12', 17: '17', 18: '18'}
-    for i in range(n):
+    for i in range(n + 1):
         if i in data:
             tree.append(Node(data[i]))
         else:
@@ -97,7 +106,7 @@ def generate_tree():
     return tree
 
 
-tree = generate_tree()
+tree = generate_tree('input.csv')
 y_assign(tree)
 index = 0
 inorder_assign(tree, 0)
